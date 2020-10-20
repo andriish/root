@@ -90,6 +90,12 @@ See the discussion at [ROOT-11014](https://sft.its.cern.ch/jira/browse/ROOT-1101
 
 ## RooFit Libraries
 
+### Improved recovery from invalid parameters
+When a function in RooFit is undefined (Poisson with negative mean, PDF with negative values, etc), RooFit can now pass information about the
+"badness" of the violation to the minimiser. The minimiser can use this to compute a gradient to find its way out of the undefined region.
+This can drastically improve its ability to recover when unstable fit models are used, for example RooPolynomial.
+
+For details, see the RooFit tutorial [rf612_recoverFromInvalidParameters.C](https://root.cern/doc/v624/rf612__recoverFromInvalidParameters_8C.html).
 
 ## 2D Graphics Libraries
 
@@ -130,6 +136,7 @@ See the discussion at [ROOT-11014](https://sft.its.cern.ch/jira/browse/ROOT-1101
 ## Build, Configuration and Testing Infrastructure
 
 - a new cmake variable, `CMAKE_INSTALL_PYTHONDIR`, has been added: it allows customization of the installation directory of ROOT's python modules
+- The developer build option `asserts` is introduced to enable/disable asserts via the `NDEBUG` C/CXX flag. Asserts are always enabled for `CMAKE_BUILD_TYPE=Debug` and `dev=ON`. The previous behavior of the builds set via the `CMAKE_BUILD_TYPE` variable has not changed.
 
 ## PyROOT
 
