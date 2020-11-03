@@ -1024,16 +1024,16 @@ TString &TString::Replace(Ssiz_t pos, Ssiz_t n1, const char *cs, Ssiz_t n2)
             memmove(p + pos + n2, p + pos + n1, rem);
          }
       }
-      if (n2) memmove(p + pos, cs, n2);
+      if (n2>0) memmove(p + pos, cs, n2);//AV here and below the last argument should be of type size_t
 finish:
       SetSize(tot);
       p[tot] = 0;
    } else {
       Ssiz_t cap = AdjustCapacity(capac, tot);
       char *data = new char[cap+1];
-      if (pos) memcpy(data, p, pos);
-      if (n2 ) memcpy(data + pos, cs, n2);
-      if (rem) memcpy(data + pos + n2, p + pos + n1, rem);
+      if (pos>0) memcpy(data, p, pos);
+      if (n2>0) memcpy(data + pos, cs, n2);
+      if (rem>0) memcpy(data + pos + n2, p + pos + n1, rem);
       UnLink();
       SetLongCap(cap+1);
       SetLongSize(tot);

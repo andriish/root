@@ -4616,13 +4616,14 @@ TPad *TPad::Pick(Int_t px, Int_t py, TObjLink *&pickobj)
             //gPad->SetSelected(ptr) as, for example, hist painter does.
             py -= Int_t((1 - GetHNDC() - GetYlowNDC()) * GetWh());
             px -= Int_t(GetXlowNDC() * GetWw());
-            fViewer3D->DistancetoPrimitive(px, py);
+            if (fViewer3D) fViewer3D->DistancetoPrimitive(px, py);
          }
          else
             dummyLink.SetObject(fView);
       }
    }
-
+   
+   if (picked)
    if (picked->InheritsFrom(TButton::Class())) {
       TButton *button = (TButton*)picked;
       if (!button->IsEditable()) pickobj = 0;

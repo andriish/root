@@ -300,7 +300,7 @@ void TCollection::Dump() const
    TObject *object;
 
    while ((object = next())) {
-      object->Dump();
+      if (object) object->Dump();
    }
 }
 

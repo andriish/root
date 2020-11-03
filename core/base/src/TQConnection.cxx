@@ -345,6 +345,7 @@ inline void TQSlot::ExecuteMethod(void *object, const char *param)
 inline void TQSlot::ExecuteMethod(void *object, Long_t *paramArr, Int_t nparam)
 {
    void *address = 0;
+   if (!fFunc) return;
    R__LOCKGUARD(gInterpreterMutex);
    if (paramArr) gCling->CallFunc_SetArgArray(fFunc, paramArr, nparam);
    if (object) address = (void *)((Long_t)object + fOffset);
@@ -670,8 +671,10 @@ CallFunc_t *TQConnection::LockSlot() const {
 /// Unlock the interpreter and mark the slot as no longer executing.
 
 void TQConnection::UnLockSlot(TQSlot *s) const {
+   if (s) {
    s->EndExecuting();
    if (s->References() <= 0) delete s;
+   }
    if (gInterpreterMutex) gInterpreterMutex->UnLock();
 }
 

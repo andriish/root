@@ -629,12 +629,17 @@ TObjLink *TList::FindLink(const TObject *obj, Int_t &idx) const
 {
    R__COLLECTION_READ_GUARD();
 
-   if (!obj)
-      return nullptr;
+   if (!obj) {
+    idx = 0; 
+    return nullptr;
+   }
 
    R__COLLECTION_READ_LOCKGUARD(ROOT::gCoreMutex);
 
-   if (!fFirst) return 0;
+   if (!fFirst) {
+    idx = 0; 
+    return nullptr;
+   }
 
    TObject *object;
    TObjLink *lnk = fFirst.get();
@@ -650,7 +655,7 @@ TObjLink *TList::FindLink(const TObject *obj, Int_t &idx) const
       lnk = lnk->Next();
       idx++;
    }
-   return 0;
+   return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
