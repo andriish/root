@@ -36,9 +36,12 @@ JSROOT.define(['d3', 'painter', 'base3d', 'hist'], (d3, jsrp, THREE) => {
      * @private */
    JSROOT.TFramePainter.prototype.Create3DScene = function(arg, render3d) {
 
-      if ((arg!==undefined) && (arg < 0)) {
+      if ((arg !== undefined) && (arg < 0)) {
 
          if (!this.mode3d) return;
+
+         if (!this.clear_3d_canvas)
+            return console.error('Strange, why mode3d is configured!!!!', this.mode3d);
 
          //if (typeof this.TestAxisVisibility === 'function')
          this.TestAxisVisibility(null, this.toplevel);
@@ -94,6 +97,9 @@ JSROOT.define(['d3', 'painter', 'base3d', 'hist'], (d3, jsrp, THREE) => {
       }
 
       render3d = jsrp.GetRender3DKind(render3d);
+
+      jsrp.Assign3DHandler(this);
+
       let sz = this.size_for_3d(undefined, render3d);
 
       this.size_z3d = 100;
@@ -207,7 +213,6 @@ JSROOT.define(['d3', 'painter', 'base3d', 'hist'], (d3, jsrp, THREE) => {
 
    /** @summary Set frame activity flag
     * @private */
-
    JSROOT.TFramePainter.prototype.SetActive = function(on) {
       if (this.control)
          this.control.enableKeys = on && JSROOT.key_handling;
@@ -221,7 +226,6 @@ JSROOT.define(['d3', 'painter', 'base3d', 'hist'], (d3, jsrp, THREE) => {
      *   - -2222 rendering performed only if there were previous calls, which causes timeout activation
      * @param {number} tmout - specifies delay, after which actual rendering will be invoked
      * @private */
-
    JSROOT.TFramePainter.prototype.Render3D = function(tmout) {
 
       if (tmout === -1111) {

@@ -100,12 +100,12 @@
 
    /** @summary JSROOT version id
      * @desc For the JSROOT release the string in format "major.minor.patch" like "6.0.0"
-     *       For the ROOT release is string is "ROOT major.minor.patch" like "ROOT 6.24.00" */
+     *       For the ROOT release string is "ROOT major.minor.patch" like "ROOT 6.24.00" */
    JSROOT.version_id = "pre6";
 
    /** @summary JSROOT version date
      * @desc Release date in format day/month/year */
-   JSROOT.version_date = "26/10/2020";
+   JSROOT.version_date = "2/11/2020";
 
    /** @summary JSROOT version id and date
      * @desc Produced by concatenation of {@link JSROOT.version_id} and {@link JSROOT.version_date} */
@@ -2168,16 +2168,14 @@
       if (arg.openui5src) JSROOT.openui5src = arg.openui5src;
       if (arg.openui5libs) JSROOT.openui5libs = arg.openui5libs;
       if (arg.openui5theme) JSROOT.openui5theme = arg.openui5theme;
+      if (!arg.ignoreUrl) {
+         let url = JSROOT.decodeUrl();
+         if (url.has('nogl')) JSROOT.settings.Render3D = JSROOT.constants.Render3D.SVG;
+         if (url.has('libs')) JSROOT._.use_full_libs = true;
+      }
 
       let prereq = "webwindow;";
-      // FIXME: remove for JSROOT v7 once ROOT code is adjusted
-      if (arg && arg.prereq)
-         if (arg.prereq == "openui5")
-            prereq += "painter;openui5"; // because of eve7 app, should be fixed there
-         else
-            prereq += arg.prereq.replace(/;v6;v7/g, ";gpad;v7gpad").replace(/2d;v7;/g, "v7gpad;").replace(/2d;v6;/g, "gpad;");
-
-      console.log('Loading', prereq)
+      if (arg && arg.prereq) prereq += arg.prereq;
 
       return JSROOT.require(prereq).then(() => {
          if (arg && arg.prereq_logdiv && document) {
@@ -2245,7 +2243,8 @@
       return this;
    }
 
-   // FIXME: for backward compatibility, will be removed in v6.2
+   /// FIXME: for backward compatibility, will be removed in v6.2
+
    JSROOT.GetUrlOption = function(opt, url, dflt) {
       return JSROOT.decodeUrl(url).get(opt, dflt === undefined ? null : dflt);
    }
@@ -2263,8 +2262,8 @@
 
    JSROOT.JSONR_unref = JSROOT.parse;
    JSROOT.MakeSVG = JSROOT.makeSVG;
-   JSROOT.ConnectWebWindow = JSROOT.connectWebWindow;
 
+   /// end of backward compatibility block
 
    JSROOT._ = _;
    JSROOT.browser = browser;

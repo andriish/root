@@ -26,9 +26,6 @@
 
 #define MESSAGE(which,text)
 
-// See TEmulatedCollectionProxy.cxx
-extern TStreamerInfo *R__GenerateTClassForPair(const std::string &f, const std::string &s);
-
 /**
 \class TGenVectorProxy
 \ingroup IO
@@ -455,21 +452,23 @@ TGenCollectionProxy::Value::Value(const std::string& inside_type, Bool_t silent)
                if ( prop&kIsStruct ) {
                   prop |= kIsClass;
                }
-               // Since we already searched GetClass earlier, this should
-               // never be true.
-               R__ASSERT(! (prop&kIsClass) && "Impossible code path" );
-//               if ( prop&kIsClass ) {
-//                  fType = TClass::GetClass(intype.c_str(),kTRUE,silent);
-//                  R__ASSERT(fType);
-//                  fCtor   = fType->GetNew();
-//                  fDtor   = fType->GetDestructor();
-//                  fDelete = fType->GetDelete();
-//               }
-//               else
-               if ( prop&kIsFundamental ) {
+
+               if ( prop&kIsClass ) {
+                  // We can get here in the case where the value if forward declared or
+                  // is an std::pair that can not be (yet) emulated (eg. "std::pair<int,void*>")
+                  fSize = std::string::npos;
+                  if (!silent)
+                     Error("TGenCollectionProxy", "Could not retrieve the TClass for %s", intype.c_str());
+//                fType = TClass::GetClass(intype.c_str(),kTRUE,silent);
+//                R__ASSERT(fType);
+//                fCtor   = fType->GetNew();
+//                fDtor   = fType->GetDestructor();
+//                fDelete = fType->GetDelete();
+               }
+               else if ( prop&kIsFundamental ) {
                   fundType = gROOT->GetType( intype.c_str() );
                   if (fundType==0) {
-                     if (intype != "long double") {
+                     if (intype != "long double" && !silent) {
                         Error("TGenCollectionProxy","Unknown fundamental type %s",intype.c_str());
                      }
                      fSize = sizeof(int);
@@ -885,7 +884,7 @@ TGenCollectionProxy *TGenCollectionProxy::InitializeEx(Bool_t silent)
                   TInterpreter::SuspendAutoParsing autoParseRaii(gCling);
                   if (0==TClass::GetClass(nam.c_str())) {
                      // We need to emulate the pair
-                     R__GenerateTClassForPair(inside[1],inside[2]);
+                     TVirtualStreamerInfo::Factory()->GenerateInfoForPair(inside[1],inside[2], silent);
                   }
                }
                newfValue = R__CreateValue(nam, silent);

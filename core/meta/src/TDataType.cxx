@@ -346,6 +346,9 @@ void TDataType::SetType(const char *name)
    } else if (!strcmp("signed char", name)) {
       fType = kChar_t; // kDataTypeAliasSignedChar_t;
       fSize = sizeof(Char_t);
+   } else if (!strcmp("void", name)) {
+      fType = kVoid_t;
+      fSize = 0;
    }
 
    if (!strcmp("Float16_t", fName.Data())) {
@@ -439,6 +442,6 @@ void TDataType::AddBuiltins(TCollection* types)
 
 TDataType* TDataType::GetDataType(EDataType type)
 {
-   if (type == kOther_t) return 0;
+   if (type == kOther_t || type >= kNumDataTypes) return 0;
    return fgBuiltins[(int)type];
 }

@@ -18,9 +18,12 @@ JSROOT.define(['d3', 'base3d', 'painter', 'v7hist'], (d3, THREE, jsrp) => {
      * @private */
    JSROOT.v7.RFramePainter.prototype.Create3DScene = function(arg, render3d) {
 
-      if ((arg!==undefined) && (arg<0)) {
+      if ((arg !== undefined) && (arg < 0)) {
 
          if (!this.mode3d) return;
+
+         if (!this.clear_3d_canvas)
+            return console.error('Strange, why mode3d is configured!!!!', this.mode3d);
 
          //if (typeof this.TestAxisVisibility === 'function')
          this.TestAxisVisibility(null, this.toplevel);
@@ -74,6 +77,8 @@ JSROOT.define(['d3', 'base3d', 'painter', 'v7hist'], (d3, THREE, jsrp) => {
 
          return;
       }
+
+      jsrp.Assign3DHandler(this);
 
       render3d = jsrp.GetRender3DKind(render3d);
       let sz = this.size_for_3d(undefined, render3d);
